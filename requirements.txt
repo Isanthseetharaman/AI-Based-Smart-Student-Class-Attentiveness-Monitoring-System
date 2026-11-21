@@ -1,0 +1,13 @@
+streamlit>=1.40
+streamlit-webrtc>=0.47.7
+pandas>=2.0
+numpy>=1.24
+opencv-python==4.14.0.94
+# MediaPipe requires contrib; keep both upstream-required wheels on the same release.
+opencv-contrib-python==4.14.0.94
+plotly>=5.18
+mediapipe>=0.10.32,<0.11
+ultralytics>=8.3,<9
+
+pillow>=10.0
+tzdata>=2024.1
