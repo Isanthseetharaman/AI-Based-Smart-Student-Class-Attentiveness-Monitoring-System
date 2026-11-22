@@ -1,0 +1,21 @@
+services:
+  - type: web
+    name: nexus-vision-smart-class-monitor
+    runtime: python
+    plan: starter
+    region: singapore
+    buildCommand: pip install -r requirements.txt && python setup_models.py
+    startCommand: streamlit run app.py --server.address 0.0.0.0 --server.port $PORT
+    healthCheckPath: /_stcore/health
+    autoDeploy: true
+    envVars:
+      - key: DEMO_MODE
+        value: "false"
+      - key: APP_TIMEZONE
+        value: Asia/Kolkata
+      - key: CAMERA_SOURCE
+        value: "0"
+    disk:
+      name: nexus-vision-data
+      mountPath: /opt/render/project/src/data
+      sizeGB: 10
