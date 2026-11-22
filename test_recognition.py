@@ -66,7 +66,9 @@ class CameraDatabaseTests(unittest.TestCase):
         pk = self.student['id']
         self.assertTrue(db.record_camera_observation(pk, 'Eyes closed', 'A', 'Class A', actor='staff'))
         self.assertFalse(db.record_camera_observation(pk, 'Eyes closed', 'A', 'Class A', actor='staff'))
-        self.assertTrue(db.record_camera_observation(None, 'Phone visible', 'A', 'Class A', actor='staff'))
+        # Phone cues are always scene-level, even if a caller supplies a
+        # nearby student identity.
+        self.assertTrue(db.record_camera_observation(pk, 'Phone visible', 'A', 'Class A', actor='staff'))
         events = db.get_attention_events('Class A')
         self.assertEqual(len(events), 2)
         phone = next(row for row in events if row['status'] == 'Phone visible')

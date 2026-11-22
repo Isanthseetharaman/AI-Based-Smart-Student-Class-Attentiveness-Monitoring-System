@@ -110,15 +110,24 @@ def camera_status(context, class_name, room, auto_attendance, save_cues):
         st.caption('Waiting for a fresh processed frame.')
         return
     if class_name and room.strip():
-        try:
-            if auto_attendance:
-                for match in snapshot['attendance']:
-                    db.record_camera_attendance(match['student_pk'], room, class_name, match['similarity'], actor=actor())
-            if save_cues:
-                for cue in snapshot['observations']:
-                    db.record_camera_observation(cue['student_pk'], cue['status'], room, class_name, actor=actor())
-        except (ValueError, sqlite3.Error) as exc:
-            show_error(exc)
+        if auto_attendance:
+            for match in snapshot['attendance']:
+                try:
+                    db.record_camera_attendance(
+                        match['student_pk'], room, class_name,
+                        match['similarity'], actor=actor(),
+                    )
+                except (ValueError, sqlite3.Error) as exc:
+                    show_error(exc)
+        if save_cues:
+            for cue in snapshot['observations']:
+                try:
+                    db.record_camera_observation(
+                        cue['student_pk'], cue['status'], room, class_name,
+                        actor=actor(),
+                    )
+                except (ValueError, sqlite3.Error) as exc:
+                    show_error(exc)
     for cue in snapshot['observations']:
         st.info(cue['status'] + (' — scene-level' if cue['student_pk'] is None else ' — sustained visual cue'))
     stats = db.get_dashboard_stats(class_name)

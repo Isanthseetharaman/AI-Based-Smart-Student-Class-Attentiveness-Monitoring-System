@@ -364,10 +364,10 @@ class ClassroomPipeline:
         phone_keys = list(dict.fromkeys(owner if owner is not None else ('scene', index) for index, owner in enumerate(phone_owners)))
         phone_confirmed = self.phone_cues.update(phone_keys, now)
         for owner in phone_confirmed:
-            if isinstance(owner, int):
-                observations.append({'student_pk': owner, 'status': 'Phone visible'})
-            else:
-                observations.append({'student_pk': None, 'status': 'Phone visible'})
+            # Phone detection is intentionally scene-level.  Even when a
+            # phone is spatially close to a confirmed face, the camera cannot
+            # reliably establish ownership or phone use by that student.
+            observations.append({'student_pk': None, 'status': 'Phone visible'})
         for box in phones:
             x1, y1, x2, y2 = map(int, box)
             self.faces.cv.rectangle(image, (x1, y1), (x2, y2), (255, 140, 0), 2)

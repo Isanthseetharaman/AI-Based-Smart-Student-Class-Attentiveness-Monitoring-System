@@ -246,8 +246,10 @@ def record_camera_observation(student_pk, status, classroom, class_name, *, acto
     from config import EVENT_COOLDOWN_SECONDS
     if status not in ('Eyes closed', 'Looking away', 'Possible conversation', 'Phone visible') or not classroom.strip() or not class_name:
         raise ValueError('A visible cue, class and classroom are required.')
-    if status == 'Phone visible' and student_pk is not None:
-        raise ValueError('Phone observations are scene-level and cannot be assigned to a student.')
+    # A detected phone is always recorded at scene level.  Spatial proximity
+    # to a face is not sufficient evidence of ownership or phone use.
+    if status == 'Phone visible':
+        student_pk = None
     now = local_now()
     cutoff = (now - timedelta(seconds=EVENT_COOLDOWN_SECONDS)).isoformat()
     with connect() as c:
